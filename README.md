@@ -15,21 +15,23 @@ This repository demonstrates modern dynamic security testing and vulnerability r
 ---
 
 ## 🛠️ Architecture & Fuzzing Pipeline
-
-[ Seed Corpus ] ---> [ libFuzzer Engine ] ---> [ Mutated Payloads ]
-|
-v
-[ Instrumented cJSON Parser ]
-|
-( Sanitizer Triggered? )
-/
-
-(Yes)                     (No)
-/
-
-[ ASan/UBSan Crash Report ]    [ Next Iteration ]
-[ Saved to /crashes/ ]
-
+┌──────────────┐     ┌─────────────────┐     ┌──────────────────┐
+│  Seed Corpus │ ──> │ libFuzzer Engine│ ──> │ Mutated Payloads │
+└──────────────┘     └─────────────────┘     └─────────┬────────┘
+                                                       │
+                                                       ▼
+                                         ┌──────────────────────────┐
+                                         │ Instrumented cJSON Parser│
+                                         └─────────────┬────────────┘
+                                                       │
+                                             ( Sanitizer Triggered? )
+                                             /                      \
+                                          (Yes)                     (No)
+                                           /                          \
+                                ┌──────────────────────┐    ┌──────────────────┐
+                                │ ASan/UBSan Crash Log │    │  Next Iteration  │
+                                │  Saved to /crashes/  │    └──────────────────┘
+                                └──────────────────────┘
 ---
 
 ## 💻 Prerequisites & Environment
