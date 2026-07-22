@@ -15,23 +15,22 @@ This repository demonstrates modern dynamic security testing and vulnerability r
 ---
 
 ## 🛠️ Architecture & Fuzzing Pipeline
-┌──────────────┐     ┌─────────────────┐     ┌──────────────────┐
-│  Seed Corpus │ ──> │ libFuzzer Engine│ ──> │ Mutated Payloads │
-└──────────────┘     └─────────────────┘     └─────────┬────────┘
-                                                       │
-                                                       ▼
-                                         ┌──────────────────────────┐
-                                         │ Instrumented cJSON Parser│
-                                         └─────────────┬────────────┘
-                                                       │
-                                             ( Sanitizer Triggered? )
-                                             /                      \
-                                          (Yes)                     (No)
-                                           /                          \
-                                ┌──────────────────────┐    ┌──────────────────┐
-                                │ ASan/UBSan Crash Log │    │  Next Iteration  │
-                                │  Saved to /crashes/  │    └──────────────────┘
-                                └──────────────────────┘
+[1] SEED CORPUS
+       └─> Raw JSON samples (valid / invalid structures)
+  
+  [2] LIBFUZZER ENGINE
+       └─> In-process mutation & coverage feedback loop
+  
+  [3] TARGET PARSER
+       └─> Instrumented cJSON build (Clang -fsanitize=fuzzer,address,undefined)
+  
+  [4] SANITIZER EVALUATION
+       ├──> [Violation Detected?]
+       │     ├── YES ──> Save minimized payload to ./crashes/ & output ASan log
+       │     └── NO  ──> Keep mutated input in memory if coverage expanded
+       │
+       └──> [Loop back to Engine for next test case]
+
 ---
 
 ## 💻 Prerequisites & Environment
