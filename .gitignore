@@ -1,0 +1,14 @@
+# Binaries & Executables
+cjson_fuzzer
+*.o
+*.a
+*.so
+
+# Crashes and logs
+crashes/crash-*
+*.log
+
+# OS & IDE artifacts
+.DS_Store
+.vscode/
+.idea/
